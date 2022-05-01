@@ -1,0 +1,15 @@
+<!--wxNetwork/index.wxml-->
+<wxs module="move" src="./move.wxs"></wxs>
+<view 
+  class="wx-network"
+  id="wxNetwork"
+  data-network-width="{{networkWidth}}"
+  data-network-height="{{networkHeight}}"
+  data-window-width="{{windowWidth}}"
+  data-window-height="{{windowHeight}}"
+  catch:touchmove="{{move.onTouchMove}}"
+  catch:touchstart="{{move.onTouchStart}}"
+  catch:touchend="{{move.onTouchEnd}}"
+>
+  network
+</view>

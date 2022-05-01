@@ -1,0 +1,15 @@
+/* wxNetwork/index.wxss */
+
+.wx-network{
+  position: fixed;
+  left: 50rpx;
+  top: 50rpx;
+  background-color: #fff;
+  border-radius: 10rpx;
+  box-shadow: 0 0 10rpx 1rpx rgba(0,0,0,0.5);
+  padding: 4rpx 8rpx;
+  z-index: 999999;
+  width: 130rpx;
+  height: 44rpx;
+  text-align: center;
+}

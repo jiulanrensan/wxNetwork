@@ -1,0 +1,137 @@
+
+var WX_NETWORK_ID = '#wxNetwork'
+
+/**
+ * 
+ * @param {object} e 
+ * @returns { { x: number, y: number } }
+ */
+function getCoords (e) {
+  if (!e) return { x: 0, y: 0 } 
+  if (e.touches && e.touches[0]) {
+    return { x: e.touches[0].pageX, y: e.touches[0].pageY }
+  } else if (e.changedTouches && e.changedTouches[0]) {
+    return { x: e.changedTouches[0].pageX, y: e.changedTouches[0].pageY }
+  } else {
+    return { x: 0, y: 0 }
+  }
+}
+
+/**
+ * 
+ * @param {object} e 
+ * @returns { { offsetLeft: number, offsetTop: number } }
+ */
+function getCompOffset (e) {
+  return { offsetLeft: e.currentTarget.offsetLeft, offsetTop: e.currentTarget.offsetTop }
+}
+
+function selectComponent (selector, ins) {
+  var state = ins.getState();
+  return state[selector] || (state[selector] = ins.selectComponent(selector));
+}
+
+/**
+ * @desc 判断network是否离屏并修正偏移值
+ * @param {object} ins 
+ * @param {number} left touchend时的clientX
+ * @param {number} top touchend时的clientY
+ * @returns { { resultLeft: number, resultTop: number } }
+ */
+function correctOffset (ins, left, top) {
+  var currentOffset = getNetworkPos(ins, left, top)
+  var nodesInfo = ins.getState().nodesInfo
+  var windowHeight = nodesInfo.windowHeight
+  var windowWidth = nodesInfo.windowWidth
+  var networkWidth = nodesInfo.networkWidth
+  var networkHeight = nodesInfo.networkHeight
+  var networkLeft = currentOffset.networkLeft
+  var networkTop = currentOffset.networkTop
+
+  var resultLeft = networkLeft
+  var resultTop = networkTop
+
+  // 如果左边距小于0
+  if (networkLeft < 0) {
+    resultLeft = 0
+  }
+  // 如果右边距小于0
+  // 等同于 左边距 + network本身宽度 >= 屏幕宽度 
+  if (networkLeft + networkWidth >= windowWidth) {
+    resultLeft = windowWidth - networkWidth
+  }
+  // 如果上边距小于0
+  if (networkTop < 0) {
+    resultTop = 0
+  }
+  // 如果下边距小于0
+  // 等同于 上边距 + network本身高度 >= 屏幕高度
+  if (networkTop + networkHeight >= windowHeight) {
+    resultTop = windowHeight - networkHeight
+  }
+
+  return { resultLeft, resultTop }
+}
+
+/**
+ * @desc 返回network的位置：左边距，上边距
+ * @param {object} ins 
+ * @param {number} left touchmove时的clientX 盒子到屏幕的左边距
+ * @param {number} top touchmove时的clientY 盒子到屏幕的上边距
+ * @returns { { networkLeft: number, networkTop: number } }
+ */
+function getNetworkPos (ins, left, top) {
+  var state = ins.getState()
+  // 不能直接用left,top作为盒子的偏移距离，因为盒子有初始偏移
+  var initialMovedCoord = state.initialMovedCoord
+  var initialOffset = state.initialOffset
+  var currentLeft = left - initialMovedCoord.x + initialOffset.offsetLeft
+  var currentTop = top - initialMovedCoord.y + initialOffset.offsetTop
+  return {
+    networkLeft: currentLeft,
+    networkTop: currentTop
+  }
+}
+
+function setStyle (ins, selector, style) {
+  var com = selectComponent(selector, ins)
+  if (!com) return
+  com.setStyle(style)
+}
+
+module.exports = {
+  onTouchStart: function (event, ins) {
+    // console.log(JSON.stringify(event));
+    var state = ins.getState()
+    var coord = getCoords(event)
+    var offset = getCompOffset(event)
+    // network长宽；屏幕长宽
+    // {"networkHeight":22,"networkWidth":65,"windowHeight":603,"windowWidth":375}
+    state.nodesInfo = event.target.dataset
+    state.initialMovedCoord = coord // touchmove时的鼠标坐标
+    state.initialOffset = offset    // 移动盒子的初始偏移
+  },
+  onTouchMove: function (event, ins) {
+    // console.log(JSON.stringify(event));
+    var coord = getCoords(event)
+    var currentOffset = getNetworkPos(ins, coord.x, coord.y)
+    var style = {
+      left: currentOffset.networkLeft + 'px',
+      top: currentOffset.networkTop + 'px'
+    }
+    setStyle(ins, WX_NETWORK_ID, style)
+  },
+  onTouchEnd: function (event, ins) {
+    // console.log(JSON.stringify(event));
+    var coord = getCoords(event)
+    var clientX = coord.x
+    var clientY = coord.y
+    var corrected = correctOffset(ins, clientX, clientY)
+    var style = {
+      left: corrected.resultLeft + 'px',
+      top: corrected.resultTop + 'px',
+      transition: 'all .2s'
+    }
+    setStyle(ins, WX_NETWORK_ID, style)
+  }
+}
