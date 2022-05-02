@@ -10,7 +10,7 @@
     "navigationBarTextStyle":"black"
   },
   "usingComponents": {
-    "wxNetwork": "./wxNetwork/index"
+    "wxNetwork": "./wxNetwork/miniprogram/index"
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"

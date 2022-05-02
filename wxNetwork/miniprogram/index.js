@@ -14,7 +14,8 @@ Component({
 		windowHeight: 603,
 		windowWidth: 375,
 		networkWidth: 65,
-		networkHeight: 22
+		networkHeight: 22,
+		showNetworkList: false
 	},
 
 	/**
@@ -36,6 +37,18 @@ Component({
 					networkHeight: styleMap['height'] + styleMap['padding-top'] + styleMap['padding-bottom']
 				})
 			}).exec()
+		},
+		handleBack () {
+			console.log('handleBack');
+			this.setData({
+				showNetworkList: false
+			})
+		},
+		handleShow () {
+			console.log('handleShow');
+			this.setData({
+				showNetworkList: true
+			})
 		}
 	},
 	lifetimes: {

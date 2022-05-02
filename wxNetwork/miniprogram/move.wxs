@@ -110,9 +110,12 @@ module.exports = {
     state.nodesInfo = event.target.dataset
     state.initialMovedCoord = coord // touchmove时的鼠标坐标
     state.initialOffset = offset    // 移动盒子的初始偏移
+    state.isTap = true
   },
   onTouchMove: function (event, ins) {
     // console.log(JSON.stringify(event));
+    var state = ins.getState()
+    state.isTap = false
     var coord = getCoords(event)
     var currentOffset = getNetworkPos(ins, coord.x, coord.y)
     var style = {
@@ -123,6 +126,11 @@ module.exports = {
   },
   onTouchEnd: function (event, ins) {
     // console.log(JSON.stringify(event));
+    var state = ins.getState()
+    if (state.isTap) {
+      ins.callMethod('handleShow')
+      return
+    }
     var coord = getCoords(event)
     var clientX = coord.x
     var clientY = coord.y
@@ -133,5 +141,5 @@ module.exports = {
       transition: 'all .2s'
     }
     setStyle(ins, WX_NETWORK_ID, style)
-  }
+  },
 }
