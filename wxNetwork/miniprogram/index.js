@@ -39,13 +39,14 @@ Component({
 			}).exec()
 		},
 		handleBack () {
-			this.setData({
-				showNetworkList: false
-			})
+			this.toggleNetworkList(false)
 		},
 		handleShow () {
+			this.toggleNetworkList(true)
+		},
+		toggleNetworkList (bool) {
 			this.setData({
-				showNetworkList: true
+				showNetworkList: bool
 			})
 		}
 	},
@@ -59,6 +60,11 @@ Component({
 		},
 		attached () {
 			this.setNetworkInfo()
+		}
+	},
+	pageLifetimes: {
+		hide () {
+			this.toggleNetworkList(false)
 		}
 	}
 })

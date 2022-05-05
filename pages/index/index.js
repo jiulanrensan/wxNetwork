@@ -23,6 +23,11 @@ Page({
         canIUseGetUserProfile: true
       })
     }
+    setTimeout(() => {
+      wx.navigateTo({
+        url: '../logs/logs'
+      })
+    }, 5000);
     this.getInfo()
   },
   getUserProfile(e) {
