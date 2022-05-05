@@ -96,5 +96,5 @@ class RequestManager {
 
 // 文件存储与处理request的解耦
 export default new RequestManager({
-  cachController: new WXFileController({ logger: true })
+  cachController: new WXFileController()
 })

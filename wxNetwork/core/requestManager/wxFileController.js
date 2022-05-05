@@ -1,21 +1,46 @@
 import wxFsApiPromisify from '../utils/wxFsApiPromisify'
 import { isObject } from '../utils/helper'
+
+let logger = true
+
+/**
+ * 
+ * @param {object} options 
+ * @param {any} options.defaultReturn
+ * @returns {function}
+ */
+function catchErrorDecorater(options = {}) {
+  const { defaultReturn = false } = options
+  return function (target, name, descriptor) {
+    var oldValue = descriptor.value;
+  
+    descriptor.value = async function() {
+      try {
+        const res = await oldValue.apply(this, arguments);
+        return res
+      } catch (error) {
+        logger && console.log(`${name} error`, error);
+        return defaultReturn
+      }
+    };
+  
+    return descriptor;
+  }
+}
+
 export default class WXFileController {
   /**
    * 
    * @param {object} options
-   * @param {boolean} options.logger 
    */
   constructor(options = {}) {
     this._fileWrapper = wxFsApiPromisify()
     this._dirPath = `${wx.env.USER_DATA_PATH}/wxNetwork`
-    const { logger = false } = options
-    this._logger = logger
+    this.init()
+  }
+  async init () {
     this.makeDir()
   }
-  succCallback(options) {
-  }
-  failCallback(options) { }
   /**
    * @desc 格式化入参
    * @param {object} content 
@@ -83,13 +108,11 @@ export default class WXFileController {
   /**
    * @desc 新建目录
    */
+  @catchErrorDecorater()
   async makeDir () {
-    try {
-      if (await this.isExisted(this._dirPath)) return
-      return await this._fileWrapper.mkdir({ dirPath: `${this._dirPath}` })
-    } catch (error) {
-      console.log('makeDir error', error);
-    }
+    if (await this.isExisted(this._dirPath)) return true
+    await this._fileWrapper.mkdir({ dirPath: `${this._dirPath}` })
+    return true
   }
   /**
    * @desc 写入文件
@@ -98,34 +121,28 @@ export default class WXFileController {
    * @param {object} options.data
    * @param {string} options.encoding
    */
+  @catchErrorDecorater()
   async write(options) {
     const { name, data, encoding = 'utf8' } = options || {}
-    try {
-      const res = await this._fileWrapper.writeFile({
-        filePath: `${this._dirPath}/${encodeURIComponent(name)}`,
-        data: this._formatReqContent(data),
-        encoding
-      })
-    } catch (error) {
-      this._logger && console.log('write error', error);
-    }
+    const res = await this._fileWrapper.writeFile({
+      filePath: `${this._dirPath}/${encodeURIComponent(name)}`,
+      data: this._formatReqContent(data),
+      encoding
+    })
+    return true
   }
   /**
    * @desc 读取文件
    * @param {string} options.name
    */
+  @catchErrorDecorater({ defaultReturn: '' })
   async read(options) {
     const { name } = options || {}
-    try {
-      const { data } = await this._fileWrapper.readFile({ 
-        filePath: `${this._dirPath}/${encodeURIComponent(name)}`,
-        encoding: 'utf-8'
-      }) || {}
-      return data || ''
-    } catch (error) {
-      this._logger && console.log('read error', error);
-      return ''
-    }
+    const { data } = await this._fileWrapper.readFile({ 
+      filePath: `${this._dirPath}/${encodeURIComponent(name)}`,
+      encoding: 'utf-8'
+    }) || { data: '' }
+    return data
   }
   /**
    * @desc 追加文件
@@ -135,42 +152,32 @@ export default class WXFileController {
    * @param {object} options.err
    * @param {string} options.encoding
    */
+  @catchErrorDecorater()
   async append(options) { 
     const { name, res, err, encoding = 'utf8' } = options || {}
     const formatted = res ? this._formatResContent(res) : this._formatErrContent(err)
-    try {
-      const res = await this._fileWrapper.appendFile({
-        filePath: `${this._dirPath}/${encodeURIComponent(name)}`,
-        data: formatted,
-        encoding
-      })
-    } catch (error) {
-      this._logger && console.log('append error', error);
-    }
+    await this._fileWrapper.appendFile({
+      filePath: `${this._dirPath}/${encodeURIComponent(name)}`,
+      data: formatted,
+      encoding
+    })
+    return true
   }
   /**
    * @desc 读取目录内文件列表
    * @returns { Promise<Array<string>> } 返回文件名列表
    */
+  @catchErrorDecorater({ defaultReturn: [] })
   async readAllList() {
-    try {
-      const { files } = await this._fileWrapper.readdir({ dirPath: this._dirPath }) || {}
-      return files || []
-    } catch (error) {
-      this._logger && console.log('readdir error', error);
-      return []
-    }
+    const { files } = await this._fileWrapper.readdir({ dirPath: this._dirPath }) || { files: [] }
+    return files
   }
   /**
    * @desc 删除文件
    */
+  @catchErrorDecorater()
   async delete(name) {
-    try {
-      await this._fileWrapper.unlink({ filePath: `${this._dirPath}/${name}` })
-      return true
-    } catch (error) {
-      this._logger && console.log('delete error', error);
-      return false
-    }
+    await this._fileWrapper.unlink({ filePath: `${this._dirPath}/${name}` })
+    return true
   }
 }
