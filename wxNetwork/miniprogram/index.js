@@ -39,13 +39,11 @@ Component({
 			}).exec()
 		},
 		handleBack () {
-			console.log('handleBack');
 			this.setData({
 				showNetworkList: false
 			})
 		},
 		handleShow () {
-			console.log('handleShow');
 			this.setData({
 				showNetworkList: true
 			})

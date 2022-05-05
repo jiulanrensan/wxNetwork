@@ -1,9 +1,5 @@
 /* wxNetwork/index.wxss */
 
-.wx-network{
-  --zIndex: 999999
-}
-
 .wx-network .wx-network_btn{
   position: fixed;
   left: 50rpx;

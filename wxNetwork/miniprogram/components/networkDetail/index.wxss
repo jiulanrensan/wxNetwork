@@ -7,8 +7,8 @@
   right: 0;
   top: 0;
   bottom: 0;
-  /* z-index: calc(var(--zIndex) + 1); */
-  z-index: calc(999999 + 2);
+  z-index: calc(var(--zIndex) + 2);
+  /* z-index: calc(999999 + 2); */
 }
 .network-detail_btn-group{
   display: flex;

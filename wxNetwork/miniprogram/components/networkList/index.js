@@ -41,7 +41,7 @@ Component({
 			})
 		},
 		destroy () {
-			console.log('destroy');
+			// console.log('destroy');
 		},
 		handleBack () {
 			this.triggerEvent("back")

@@ -1,8 +1,5 @@
 <!--wxNetwork/index.wxml-->
 <wxs module="move" src="./move.wxs"></wxs>
-<!-- catch:touchmove="{{move.onTouchMove}}"
-  catch:touchstart="{{move.onTouchStart}}"
-  catch:touchend="{{move.onTouchEnd}}" -->
 <view class="wx-network">
   <view 
   class="wx-network_btn"
