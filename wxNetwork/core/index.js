@@ -1,4 +1,5 @@
-
+import requestManager from './requestManager/index'
+import { isFunction } from './utils/helper'
 const originalRequest = wx.request
 
 /**
@@ -17,13 +18,33 @@ function requestAspect (options) {
     header,
     data,
     success,
-    fail,
-    complete
+    fail
   } = options
-  console.log('url', options.url)
+  let uniqueUrl = requestManager.genUniqueUrl(url)
+  requestManager.addReq({
+    url: uniqueUrl,
+    method,
+    header,
+    data
+  })
 
   // 执行原wx.request
-  const requestTask = originalRequest(options)
+  const requestTask = originalRequest(Object.assign(options, {
+    success: async function (args) {
+      requestManager.appendReq({
+        url: uniqueUrl,
+        res: args
+      })
+      isFunction(success) && success.call(this, args)
+    },
+    fail: function (args) {
+      requestManager.appendReq({
+        url: uniqueUrl,
+        err: args
+      })
+      isFunction(fail) && fail.call(this, args)
+    }
+  }))
   return requestTask
 }
 

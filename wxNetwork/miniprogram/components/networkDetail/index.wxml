@@ -1,19 +1,17 @@
 <!--wxNetwork/components/networkDetail/index.wxml-->
-<view class="network-list" wx:if="{{showNetworkList}}">
-  <view class="network-list_btn-group">
+<view class="network-detail" wx:if="{{showNetworkDetail}}">
+  <view class="network-detail_btn-group">
     <view class="btn" catch:tap="handleBack">返回</view>
-    <view class="btn" catch:tap="hanldeClearAll">清空</view>
+    <view class="btn" catch:tap="hanldeCopy">复制</view>
   </view>
-  <scroll-view scroll-y class="network-list_scrollview" scroll-into-view="{{toViewId}}" scroll-with-animation>
-    <block wx:if="{{requestList.length}}">
-      <view wx:for="{{requestList}}" wx:key="index" class="network-list_item">
-        <view >{{item.url}}{{item.url}}{{item.url}}{{item.url}}</view>
+  <scroll-view scroll-y class="network-detail_scrollview" scroll-with-animation>
+    <block wx:if="{{requestDetail}}">
+      <view class="network-detail_item">
+        <view >{{requestDetail}}</view>
       </view>
     </block>
     <block wx:else>
-      <view class="network-list_scrollview_none">暂无请求数据~</view>
+      <view class="network-detail_scrollview_none">暂无请求数据~</view>
     </block>
-    <!-- 用来滚动到底部 -->
-    <view id="isBottom" class="list-bottom"></view>
   </scroll-view>
 </view>

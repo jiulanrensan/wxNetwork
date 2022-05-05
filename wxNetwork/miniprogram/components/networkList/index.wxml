@@ -1,4 +1,4 @@
-<!--wxNetwork/components/networkList/index.wxml-->
+<!--wxNetwork/components/network-detail/index.wxml-->
 <view class="network-list" wx:if="{{showNetworkList}}">
   <view class="network-list_btn-group">
     <view class="btn" catch:tap="handleBack">返回</view>
@@ -6,8 +6,8 @@
   </view>
   <scroll-view scroll-y class="network-list_scrollview" scroll-into-view="{{toViewId}}" scroll-with-animation>
     <block wx:if="{{requestList.length}}">
-      <view wx:for="{{requestList}}" wx:key="index" class="network-list_item">
-        <view class="network-list_item_text">{{item.url}}{{item.url}}{{item.url}}{{item.url}}</view>
+      <view wx:for="{{requestList}}" wx:key="key" class="network-list_item" catch:tap="handleShowDetail" data-url="{{item.url}}" data-key="{{item.key}}">
+        <view class="network-list_item_text">{{item.url}}</view>
       </view>
     </block>
     <block wx:else>
@@ -16,4 +16,7 @@
     <!-- 用来滚动到底部 -->
     <view id="isBottom" class="list-bottom"></view>
   </scroll-view>
+  <view class="network-detail">
+    <networkDetail showNetworkDetail="{{showNetworkDetail}}" reqDetailUrl="{{reqDetailUrl}}" catch:back="handleDetailBack" />
+  </view>
 </view>

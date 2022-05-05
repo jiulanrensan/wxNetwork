@@ -1,6 +1,6 @@
 /* wxNetwork/components/networkDetail/index.wxss */
 
-.network-list{
+.network-detail{
   background-color: #fff;
   position: fixed;
   left: 0;
@@ -8,39 +8,35 @@
   top: 0;
   bottom: 0;
   /* z-index: calc(var(--zIndex) + 1); */
-  z-index: calc(999999 + 1);
+  z-index: calc(999999 + 2);
 }
-.network-list_btn-group{
+.network-detail_btn-group{
   display: flex;
   justify-content: space-between;
   height: 60rpx;
   box-shadow: 0 5rpx 10rpx 0 rgba(0,0,0,0.2);
 }
-.network-list_btn-group .btn{
+.network-detail_btn-group .btn{
   font-size: 32rpx;
   padding: 10rpx;
   border:  1px solid rgba(0, 0, 0, 0.2);
   margin: 0 20rpx;
 }
-.network-list_scrollview{
+.network-detail_scrollview{
   width: 100%;
   height: calc(100% - 60rpx);
   position: relative;
 }
-.network-list_item{
+.network-detail_item{
   padding: 20rpx;
   text-align: left;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.2);
+  white-space: pre-wrap;
 }
-.network-list_item view {
+.network-detail_item view {
   width: 100%;
   overflow-wrap: break-word;
 }
-.network-list_scrollview_none{
+.network-detail_scrollview_none{
   text-align: center;
   padding: 50rpx;
-}
-.list-bottom {
-  width: 100%;
-  height: 1px;
 }

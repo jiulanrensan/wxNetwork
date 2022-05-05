@@ -1,27 +1,23 @@
 // wxNetwork/components/networkDetail/index.js
-const requestList = Array.from({length: 30}, (_, idx) => {
-	return {
-		url: 'https://www.baidu.com',
-		method: 'get',
-		status: '200'
-	}
-})
+import requestManager from '../../../core/requestManager/index'
+
 Component({
 	/**
 	 * 组件的属性列表
 	 */
 	properties: {
-		showNetworkList: {
+		showNetworkDetail: {
 			type: Boolean,
 			default: false
+		},
+		reqDetailUrl: {
+			type: String,
+			default: ''
 		}
 	},
 	observers: {
-		'showNetworkList' (val) {
-			console.log('showNetworkList', val);
-			const lastStatus = this.data.showNetworkList
-			if (lastStatus === val) return
-			val ? this.init() : this.destroy()
+		'showNetworkDetail' (val) {
+			val && this.init()
 		}
 	},
 
@@ -29,26 +25,25 @@ Component({
 	 * 组件的初始数据
 	 */
 	data: {
-		requestList: requestList,
-		toViewId: 'isBottom'
+		requestDetail: null,
 	},
 
 	/**
 	 * 组件的方法列表
 	 */
 	methods: {
-		init () {
-			console.log('init');
-		},
-		destroy () {
-			console.log('destroy');
+		async init () {
+			const res = await requestManager.getReqDetail(this.data.reqDetailUrl)
+			this.setData({
+				requestDetail: res
+			})
 		},
 		handleBack () {
 			this.triggerEvent("back")
 		},
-		hanldeClearAll () {
-			this.setData({
-				requestList: []
+		hanldeCopy () {
+			wx.setClipboardData({
+				data: this.data.requestDetail
 			})
 		}
 	},
